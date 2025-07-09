@@ -1,4 +1,4 @@
-# YourViews! 📊
+# Welcome to YourViews! 📊
 
 _A modern platform for collecting, analyzing, and visualizing public opinions through polls and surveys._
 
@@ -41,6 +41,6 @@ _A modern platform for collecting, analyzing, and visualizing public opinions th
 
 ### Installation
 ```bash
-git clone https://github.com/your-username/yourviews.git
+git clone https://github.com/clueanalytics7/yourviews.git
 cd yourviews
 npm install
