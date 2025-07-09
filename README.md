@@ -1,73 +1,46 @@
-# Welcome to your Lovable project
+# YourViews! 📊
 
-## Project info
+_A modern platform for collecting, analyzing, and visualizing public opinions through polls and surveys._
 
-**URL**: https://lovable.dev/projects/4d90a809-cbd5-4d73-b512-831fb81050e4
+![YourViews! Screenshot](/screenshot.png) <!-- Add actual screenshot path -->
 
-## How can I edit this code?
+## 🌟 Features
 
-There are several ways of editing your application.
+- **Create Interactive Polls**  
+  ✓ Multiple question types  
+  ✓ Real-time results  
+  ✓ Anonymous voting options  
 
-**Use Lovable**
+- **Advanced Analytics**  
+  ✓ Demographic breakdowns  
+  ✓ Sentiment analysis  
+  ✓ Exportable reports (CSV/PDF)  
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/4d90a809-cbd5-4d73-b512-831fb81050e4) and start prompting.
+- **Secure & Scalable**  
+  🔒 JWT authentication  
+  🚀 Powered by Supabase  
+  📱 Mobile-responsive design  
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠️ Tech Stack
 
-**Use your preferred IDE**
+**Frontend**  
+[![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+**Backend**  
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🚀 Quick Start
 
-Follow these steps:
+### Prerequisites
+- Node.js ≥18.x
+- PostgreSQL ≥15
+- Supabase account
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/4d90a809-cbd5-4d73-b512-831fb81050e4) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes it is!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### Installation
+```bash
+git clone https://github.com/your-username/yourviews.git
+cd yourviews
+npm install
