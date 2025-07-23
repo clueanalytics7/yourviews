@@ -1,5 +1,7 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabaseClient";
+import { Poll } from "@/types";
 import {
   Table,
   TableBody,
@@ -9,6 +11,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -17,41 +26,145 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { mockPolls, mockTopics } from "@/data/mockData";
-import { Poll } from "@/types";
-import { Search, Edit, Trash2, Plus } from "lucide-react";
+import { Search, Edit, Trash2, Plus, Loader2 } from "lucide-react";
+import CreatePollForm from "@/components/polls/CreatePollForm";
+
+const fetchPolls = async (): Promise<Poll[]> => {
+  const { data: pollItems, error: pollItemsError } = await supabase
+    .from("poll_item")
+    .select("poll_id, poll_title, poll_description, created_by_id, created_at, updated_at, is_active");
+
+  if (pollItemsError) throw new Error(pollItemsError.message);
+
+  const pollIds = pollItems.map(poll => poll.poll_id);
+
+  const { data: voteSummaries, error: voteSummariesError } = await supabase
+    .from("poll_vote_summary")
+    .select("poll_id, total_votes")
+    .in("poll_id", pollIds);
+
+  if (voteSummariesError) throw new Error(voteSummariesError.message);
+
+  const pollsWithVotes = pollItems.map(poll => ({
+    ...poll,
+    total_votes: voteSummaries?.find(summary => summary.poll_id === poll.poll_id)?.total_votes ?? 0,
+    topicName: "N/A" // No topic table; use a placeholder
+  }));
+
+  
+  return pollsWithVotes;
+};
 
 const AdminPolls = () => {
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
-  
-  // Map topic IDs to names for display
-  const topicMap = mockTopics.reduce((acc, topic) => {
-    acc[topic.id] = topic.title;
-    return acc;
-  }, {} as Record<string, string>);
-  
-  // Filter polls based on search
-  const filteredPolls = mockPolls.filter((poll) => 
-    poll.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (topicMap[poll.topicId] && topicMap[poll.topicId].toLowerCase().includes(searchTerm.toLowerCase()))
+  const [isCreatePollOpen, setCreatePollOpen] = useState(false);
+  const { data: polls, isLoading, isError, error } = useQuery<Poll[]>({ 
+    queryKey: ["polls"], 
+    queryFn: fetchPolls 
+  });
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["polls"] });
+  }, [queryClient]);
+
+  const filteredPolls = polls?.filter((poll) =>
+    poll.poll_title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleDownloadPolls = () => {
+    if (!filteredPolls || filteredPolls.length === 0) {
+      alert("No polls to download.");
+      return;
+    }
+
+    const headers = ["Poll ID", "Title", "Description", "Created By", "Created At", "Updated At", "Is Active", "Total Votes"];
+    const csv = [
+      headers.join(","),
+      ...filteredPolls.map(poll =>
+        [
+          `"${poll.poll_id}"`,
+          `"${poll.poll_title.replace(/"/g, '""')}"`,
+          `"${(poll.poll_description || "").replace(/"/g, '""')}"`,
+          `"${poll.created_by_id}"`,
+          `"${new Date(poll.created_at).toISOString()}"`,
+          `"${poll.updated_at ? new Date(poll.updated_at).toISOString() : ""}"`,
+          `"${poll.is_active}"`,
+          `"${poll.total_votes}"`,
+        ].join(",")
+      ),
+    ].join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", "polls_data.csv");
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  if (isLoading) {
+    return <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div>;
+  }
+
+  if (isError) {
+    return <div className="text-center py-12 text-red-500">Error: {error.message}</div>;
+  }
+
+  const renderHeader = () => (
+    <div className="flex justify-between items-center mb-8">
+      <div>
+        <h1 className="text-3xl font-bold">Manage Polls</h1>
+        <p className="text-gray-600 mt-1">
+          Create, edit, and manage polls across different topics
+        </p>
+      </div>
+      <div className="flex gap-4">
+        <Dialog open={isCreatePollOpen} onOpenChange={setCreatePollOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-brand-purple hover:bg-brand-light-purple">
+              <Plus className="mr-2 h-4 w-4" />
+              Create New Poll
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Create a New Poll</DialogTitle>
+            </DialogHeader>
+            <CreatePollForm setOpen={setCreatePollOpen} />
+          </DialogContent>
+        </Dialog>
+        <Button 
+          variant="outline" 
+          className="border-brand-purple text-brand-purple hover:bg-brand-purple hover:text-white"
+          onClick={handleDownloadPolls}
+          disabled={!polls?.length}
+        >
+          Download Polls Data
+        </Button>
+      </div>
+    </div>
+  );
+
+  if (!polls?.length) {
+    return (
+      <div>
+        {renderHeader()}
+        <div className="text-center py-12 text-gray-500">
+          No polls available. Create a new poll to get started.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold">Manage Polls</h1>
-          <p className="text-gray-600 mt-1">
-            Create, edit, and manage polls across different topics
-          </p>
-        </div>
-        
-        <Button className="bg-brand-purple hover:bg-brand-light-purple">
-          <Plus className="mr-2 h-4 w-4" />
-          Create New Poll
-        </Button>
-      </div>
-      
+      {renderHeader()}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Polls</CardTitle>
@@ -86,26 +199,26 @@ const AdminPolls = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredPolls.map((poll) => (
-                  <TableRow key={poll.id}>
+                {filteredPolls?.map((poll) => (
+                  <TableRow key={poll.poll_id}>
                     <TableCell className="font-medium max-w-xs truncate">
-                      {poll.question}
+                      {poll.poll_title}
                     </TableCell>
-                    <TableCell>{topicMap[poll.topicId] || "Unknown"}</TableCell>
-                    <TableCell className="text-center">{poll.totalVotes}</TableCell>
+                    <TableCell>{poll.topicName}</TableCell>
+                    <TableCell className="text-center">{poll.total_votes}</TableCell>
                     <TableCell className="text-center">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          poll.isActive
+                          poll.is_active
                             ? "bg-green-100 text-green-800"
                             : "bg-gray-100 text-gray-800"
                         }`}
                       >
-                        {poll.isActive ? "Active" : "Inactive"}
+                        {poll.is_active ? "Active" : "Inactive"}
                       </span>
                     </TableCell>
                     <TableCell className="text-center">
-                      {new Date(poll.createdAt).toLocaleDateString()}
+                      {new Date(poll.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end space-x-2">
@@ -120,7 +233,7 @@ const AdminPolls = () => {
                   </TableRow>
                 ))}
                 
-                {filteredPolls.length === 0 && (
+                {filteredPolls?.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center">
                       No polls found matching your search.

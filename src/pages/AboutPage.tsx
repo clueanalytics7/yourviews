@@ -106,7 +106,7 @@ const AboutPage = () => {
                     Create an Account
                   </Button>
                 </Link>
-                <Link to="/topics">
+                <Link to="/polls">
                   <Button variant="outline" className="border-brand-purple text-brand-purple hover:bg-brand-purple hover:text-white">
                     Browse Topics
                   </Button>

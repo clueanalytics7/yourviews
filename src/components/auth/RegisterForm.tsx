@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,9 +14,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link, useNavigate } from "react-router-dom";
-import SocialLogins from "./SocialLogins";
-import { supabase } from "@/lib/supabaseClient";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters" }),
@@ -38,9 +36,9 @@ const formSchema = z.object({
 
 const RegisterForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+  const { signup } = useAuth();
   const navigate = useNavigate();
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,30 +53,16 @@ const RegisterForm = () => {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          data: {
-            username: data.username,
-          },
-        },
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Registration successful!",
+      await signup(data.email, data.password, data.username);
+      toast.success("Registration successful!", {
         description: "Please check your email for a confirmation link.",
       });
-      navigate("/login");
-
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Registration failed",
-        description: error.message,
+      navigate("/register-success");
+    } catch (error: unknown) {
+      toast.error("Registration failed", {
+        description: error.message || "Please try again later.",
       });
+      console.error("Register error:", error.message, error.stack);
     } finally {
       setIsLoading(false);
     }
@@ -187,7 +171,8 @@ const RegisterForm = () => {
         </form>
       </Form>
 
-      <SocialLogins isLoading={isLoading} />
+      {/* Placeholder for SocialLogins if unsupported, remove if not implemented */}
+      {/* <SocialLogins isLoading={isLoading} /> */}
       
       <div className="mt-6 pt-6 border-t border-gray-200 text-center text-sm">
         <p className="text-gray-600">

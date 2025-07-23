@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -56,10 +56,11 @@ const LoginForm = () => {
       // Redirect to the page they were trying to access, or home
       navigate(from, { replace: true });
     } catch (error) {
+      const errorMessage = (error as Error).message || "Please check your credentials and try again.";
       toast({
         variant: "destructive",
         title: "Login failed",
-        description: "Please check your credentials and try again.",
+        description: errorMessage,
       });
     } finally {
       setIsLoading(false);
@@ -69,7 +70,7 @@ const LoginForm = () => {
   return (
     <div className="bg-white p-8 shadow-md rounded-lg">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" autoComplete="off">
           <FormField
             control={form.control}
             name="email"
@@ -77,7 +78,7 @@ const LoginForm = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="your.email@example.com" {...field} />
+                  <Input placeholder="your.email@example.com" {...field} autoComplete="off" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -90,7 +91,7 @@ const LoginForm = () => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="••••••••" {...field} />
+                  <Input type="password" placeholder="••••••••" {...field} autoComplete="new-password" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -116,9 +117,9 @@ const LoginForm = () => {
       <SocialLogins isLoading={isLoading} />
 
       <p className="mt-6 text-center text-sm text-gray-500">
-        <span className="text-brand-purple cursor-pointer hover:underline">
+        <Link to="/forgot-password" className="text-brand-purple cursor-pointer hover:underline">
           Forgot your password?
-        </span>
+        </Link>
       </p>
     </div>
   );

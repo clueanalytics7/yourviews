@@ -89,7 +89,7 @@ const AdminSidebar = () => {
         <div className="flex items-center px-2 mb-4">
           <div className="flex-shrink-0">
             <div className="h-8 w-8 rounded-full bg-brand-purple text-white flex items-center justify-center">
-              {user?.username.charAt(0).toUpperCase() || 'A'}
+              {user?.username?.charAt(0).toUpperCase() || 'A'}
             </div>
           </div>
           <div className="ml-3">

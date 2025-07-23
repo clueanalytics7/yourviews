@@ -18,9 +18,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { UserProfile } from "@/types";
 
 const formSchema = z.object({
-  age: z.string().refine((val) => !val || (!isNaN(parseInt(val)) && parseInt(val) > 0 && parseInt(val) < 120), {
-    message: "Age must be a number between 1 and 120",
-  }).optional(),
+  age: z.preprocess(
+    (val) => (val ? parseInt(String(val), 10) : undefined),
+    z.number().positive().int().min(1).max(120).optional()
+  ),
   gender: z.string().optional(),
   location: z.string().optional(),
   education: z.string().optional(),

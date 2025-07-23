@@ -19,7 +19,7 @@ const Hero = () => {
                 Join YourViews to vote on important social issues and see what others think. Your voice can make a difference.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-                <Link to="/topics">
+                <Link to="/polls">
                   <Button className="bg-brand-purple hover:bg-brand-light-purple text-white text-base px-8 py-6">
                     Explore Topics
                     <ArrowRight className="ml-2 h-4 w-4" />

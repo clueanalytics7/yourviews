@@ -1,7 +1,5 @@
-
 import React from "react";
 import RegisterForm from "@/components/auth/RegisterForm";
-import { Link } from "react-router-dom";
 
 const RegisterPage = () => {
   return (
@@ -18,15 +16,6 @@ const RegisterPage = () => {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <RegisterForm />
-          
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-500">
-              Already have an account?{" "}
-              <Link to="/login" className="font-medium text-brand-purple hover:text-brand-light-purple">
-                Sign in
-              </Link>
-            </p>
-          </div>
         </div>
       </div>
       
