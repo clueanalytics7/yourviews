@@ -27,50 +27,55 @@ import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 
 import NotFound from "./pages/NotFound";
 
-export const router = createBrowserRouter([
+export const router = createBrowserRouter(
+  [
+    {
+      element: <MainLayout />,
+      errorElement: <NotFound />,
+      children: [
+        { path: "/", element: <Index /> },
+        { path: "/polls", element: <PollsPage /> },
+        { path: "/polls/:id", element: <PollDetailPage /> },
+        { path: "/about", element: <AboutPage /> },
+        { path: "/login", element: <LoginPage /> },
+        { path: "/register", element: <RegisterPage /> },
+        { path: "/register-success", element: <RegisterSuccessPage /> },
+        { path: "/forgot-password", element: <ForgotPasswordPage /> },
+        { path: "/reset-password", element: <ResetPasswordPage /> },
+        { path: "/terms", element: <TermsOfServicePage /> },
+        { path: "/privacy", element: <PrivacyPolicyPage /> },
+        {
+          path: "/profile",
+          element: (
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          ),
+        },
+      ],
+    },
+    {
+      path: "/admin",
+      errorElement: <NotFound />,
+      element: (
+        <ProtectedRoute isAdminRoute={true}>
+          <AdminLayout />
+        </ProtectedRoute>
+      ),
+      children: [
+        { index: true, element: <AdminDashboard /> },
+        { path: "polls", element: <AdminPolls /> },
+        { path: "users", element: <AdminUsers /> },
+        { path: "analytics", element: <AdminAnalytics /> },
+        { path: "settings", element: <AdminSettingsPage /> },
+      ],
+    },
+    {
+      path: "*",
+      element: <NotFound />,
+    },
+  ],
   {
-    element: <MainLayout />,
-    errorElement: <NotFound />,
-    children: [
-      { path: "/", element: <Index /> },
-      { path: "/polls", element: <PollsPage /> },
-      { path: "/polls/:id", element: <PollDetailPage /> },
-      { path: "/about", element: <AboutPage /> },
-      { path: "/login", element: <LoginPage /> },
-      { path: "/register", element: <RegisterPage /> },
-      { path: "/register-success", element: <RegisterSuccessPage /> },
-      { path: "/forgot-password", element: <ForgotPasswordPage /> },
-      { path: "/reset-password", element: <ResetPasswordPage /> },
-      { path: "/terms", element: <TermsOfServicePage /> },
-      { path: "/privacy", element: <PrivacyPolicyPage /> },
-      {
-        path: "/profile",
-        element: (
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        ),
-      },
-    ],
-  },
-  {
-    path: "/admin",
-    errorElement: <NotFound />,
-    element: (
-      <ProtectedRoute isAdminRoute={true}>
-        <AdminLayout />
-      </ProtectedRoute>
-    ),
-    children: [
-      { index: true, element: <AdminDashboard /> },
-      { path: "polls", element: <AdminPolls /> },
-      { path: "users", element: <AdminUsers /> },
-      { path: "analytics", element: <AdminAnalytics /> },
-      { path: "settings", element: <AdminSettingsPage /> },
-    ],
-  },
-  {
-    path: "*",
-    element: <NotFound />,
-  },
-]);
+    basename: "/yourviews/",
+  }
+);
