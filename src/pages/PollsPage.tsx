@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import PollList from "@/components/polls/PollList";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { 
   Select, 
   SelectContent, 
@@ -9,12 +8,10 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase, supabaseUrl } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import { Poll } from "@/types";
 import PollCardSkeleton from "@/components/polls/PollCardSkeleton";
-import MainLayout from "@/components/layout/MainLayout";
 
 
 
@@ -60,7 +57,7 @@ const PollsPage: React.FC = () => {
 
   const sortedPolls = useMemo(() => {
     if (!polls) return [];
-    let sorted = [...polls];
+    const sorted = [...polls];
     if (sortOrder === "newest") {
       sorted.sort(
         (a, b) =>

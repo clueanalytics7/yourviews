@@ -13,8 +13,6 @@ const fetchRecentPolls = async (): Promise<Poll[]> => {
   const {
     data: pollData,
     error: pollError,
-    status,
-    statusText,
   } = await supabase
     .from("poll_item")
     .select("*, user_profile(user_name)")

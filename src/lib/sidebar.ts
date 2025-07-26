@@ -157,9 +157,9 @@ SidebarProvider.displayName = "SidebarProvider"
 export const Sidebar = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
-    side?: "left" | "right"
-    variant?: "sidebar" | "floating" | "inset"
-    collapsible?: "offcanvas" | "icon" | "none"
+    side?: "left" | "right";
+    variant?: "sidebar" | "floating" | "inset";
+    collapsible?: "offcanvas" | "icon" | "none";
   }
 >(
   (
@@ -628,13 +628,15 @@ export const SidebarMenuSubItem = React.forwardRef<
 >(({ ...props }, ref) => <li ref={ref} {...props} />)
 SidebarMenuSubItem.displayName = "SidebarMenuSubItem"
 
+interface SidebarMenuSubButtonProps extends React.ComponentProps<"a"> {
+  asChild?: boolean;
+  size?: "sm" | "md";
+  isActive?: boolean;
+}
+
 export const SidebarMenuSubButton = React.forwardRef<
   HTMLAnchorElement,
-  React.ComponentProps<"a"> & {
-    asChild?: boolean;
-    size?: "sm" | "md";
-    isActive?: boolean;
-  };
+  SidebarMenuSubButtonProps
 >(({ asChild = false, size = "md", isActive, className, ...props }, ref) => {
   const Comp = asChild ? Slot : "a";
 
